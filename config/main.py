@@ -1253,6 +1253,11 @@ def reload(db, filename, yes, load_sysinfo, no_service_restart, disable_arp_cach
     if multi_asic.is_multi_asic():
         num_cfg_file += num_asic
 
+    # Remove cached PG drop counters data
+    dropstat_dir_prefix = '/tmp/dropstat'
+    command = "rm -rf {}-*".format(dropstat_dir_prefix)
+    clicommon.run_command(command, display_cmd=True)
+
     # If the user give the filename[s], extract the file names.
     if filename is not None:
         cfg_files = filename.split(',')
@@ -2082,20 +2087,28 @@ def warm_restart(ctx, redis_unix_socket_path):
     ctx.obj = {'db': config_db, 'state_db': state_db, 'prefix': prefix}
 
 @warm_restart.command('enable')
-@click.argument('module', metavar='<module>', default='system', required=False, type=click.Choice(["system", "swss", "bgp", "teamd"]))
+@click.argument('module', metavar='<module>', default='system', required=False)
 @click.pass_context
 def warm_restart_enable(ctx, module):
     state_db = ctx.obj['state_db']
+    config_db = ctx.obj['db']
+    feature_table = config_db.get_table('FEATURE')
+    if module != 'system' and module not in feature_table:
+        exit('Feature {} is unknown'.format(module))
     prefix = ctx.obj['prefix']
     _hash = '{}{}'.format(prefix, module)
     state_db.set(state_db.STATE_DB, _hash, 'enable', 'true')
     state_db.close(state_db.STATE_DB)
 
 @warm_restart.command('disable')
-@click.argument('module', metavar='<module>', default='system', required=False, type=click.Choice(["system", "swss", "bgp", "teamd"]))
+@click.argument('module', metavar='<module>', default='system', required=False)
 @click.pass_context
 def warm_restart_enable(ctx, module):
     state_db = ctx.obj['state_db']
+    config_db = ctx.obj['db']
+    feature_table = config_db.get_table('FEATURE')
+    if module != 'system' and module not in feature_table:
+        exit('Feature {} is unknown'.format(module))
     prefix = ctx.obj['prefix']
     _hash = '{}{}'.format(prefix, module)
     state_db.set(state_db.STATE_DB, _hash, 'enable', 'false')
