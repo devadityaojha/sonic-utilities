@@ -347,7 +347,7 @@ def mpls(ctx, interfacename):
             continue
 
         mpls = appl_db.get(appl_db.APPL_DB, key, 'mpls')
-        if mpls == '':
+        if mpls is None or mpls == '':
             intfs_data.update({tokens[1]: 'disable'})
         else:
             intfs_data.update({tokens[1]: mpls})
