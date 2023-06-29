@@ -314,6 +314,7 @@ def setup_multi_asic_bgp_instance(request):
             return ""
 
     def mock_run_bgp_command(vtysh_cmd, bgp_namespace, vtysh_shell_cmd=constants.RVTYSH_COMMAND):
+        import pdb; pdb.set_trace()
         if m_asic_json_file.startswith('bgp_v4_network') or \
             m_asic_json_file.startswith('bgp_v6_network'):
             return mock_show_bgp_network_multi_asic(m_asic_json_file)
@@ -355,10 +356,7 @@ def setup_multi_asic_bgp_instance(request):
     if request.param == 'ip_route_for_int_ip':
         bgp_util.run_bgp_command = mock_run_bgp_command_for_static
     elif request.param == 'show_bgp_summary_no_neigh':
-        functions_to_call = [mock_run_show_sum_neigh_bgp_command,
-                             mock_run_device_info_bgp_command]
-        bgp_util.run_bgp_command = mock.MagicMock(
-            side_effect=functions_to_call)
+        bgp_util.run_bgp_command = mock_run_bgp_command
     else:
         bgp_util.run_bgp_command = mock_run_bgp_command
 
