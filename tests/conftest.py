@@ -331,7 +331,7 @@ def setup_multi_asic_bgp_instance(request):
         else:
             return ""
 
-    def mock_run_show_sum_neigh_bgp_command(bgp_namespace):
+    def mock_run_show_sum_neigh_bgp_command(vtysh_cmd, bgp_namespace, vtysh_shell_cmd=constants.VTYSH_COMMAND):
         bgp_mocked_json = os.path.join(
             test_path, 'mock_tables', bgp_namespace, m_asic_no_neigh_json_file)
         if os.path.isfile(bgp_mocked_json):
@@ -340,8 +340,8 @@ def setup_multi_asic_bgp_instance(request):
             return mock_frr_data
         else:
             return ""
-    
-    def mock_run_device_info_bgp_command(bgp_namespace):
+
+    def mock_run_device_info_bgp_command(vtysh_cmd, bgp_namespace, vtysh_shell_cmd=constants.VTYSH_COMMAND):
         bgp_mocked_json = os.path.join(
             test_path, 'mock_tables', bgp_namespace, m_asic_basic_device_info_json_file)
         if os.path.isfile(bgp_mocked_json):
