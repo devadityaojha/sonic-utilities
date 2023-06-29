@@ -331,9 +331,19 @@ def setup_multi_asic_bgp_instance(request):
         else:
             return ""
 
-    def mock_run_show_sum_bgp_command(bgp_namespace, masic_input_json_file):
+    def mock_run_show_sum_neigh_bgp_command(bgp_namespace):
         bgp_mocked_json = os.path.join(
-            test_path, 'mock_tables', bgp_namespace, masic_input_json_file)
+            test_path, 'mock_tables', bgp_namespace, m_asic_no_neigh_json_file)
+        if os.path.isfile(bgp_mocked_json):
+            with open(bgp_mocked_json) as json_data:
+                mock_frr_data = json_data.read()
+            return mock_frr_data
+        else:
+            return ""
+    
+    def mock_run_device_info_bgp_command(bgp_namespace):
+        bgp_mocked_json = os.path.join(
+            test_path, 'mock_tables', bgp_namespace, m_asic_basic_device_info_json_file)
         if os.path.isfile(bgp_mocked_json):
             with open(bgp_mocked_json) as json_data:
                 mock_frr_data = json_data.read()
@@ -345,12 +355,8 @@ def setup_multi_asic_bgp_instance(request):
     if request.param == 'ip_route_for_int_ip':
         bgp_util.run_bgp_command = mock_run_bgp_command_for_static
     elif request.param == 'show_bgp_summary_no_neigh':
-        functions_to_call = [mock_run_show_sum_bgp_command("asic0", m_asic_no_neigh_json_file),
-                             mock_run_show_sum_bgp_command("asic0", m_asic_basic_device_info_json_file),
-                             mock_run_show_sum_bgp_command("asic1", m_asic_no_neigh_json_file),
-                             mock_run_show_sum_bgp_command("asic1", m_asic_basic_device_info_json_file),
-                             mock_run_show_sum_bgp_command("asic2", m_asic_no_neigh_json_file),
-                             mock_run_show_sum_bgp_command("asic2", m_asic_basic_device_info_json_file)]
+        functions_to_call = [mock_run_show_sum_neigh_bgp_command,
+                             mock_run_device_info_bgp_command]
         bgp_util.run_bgp_command = mock.MagicMock(
             side_effect=functions_to_call)
     else:
