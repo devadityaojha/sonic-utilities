@@ -296,9 +296,9 @@ def setup_multi_asic_bgp_instance(request):
         request.param.startswith('bgp_v4_neighbor') or \
         request.param.startswith('bgp_v6_neighbor'):
         m_asic_json_file = request.param
-    elif request.param == 'show_bgp_summary_no_neigh':
-        m_asic_no_neigh_json_file = 'no_bgp_neigh.json'
-        m_asic_basic_device_info_json_file = 'device_bgp_info.json'
+    # elif request.param == 'show_bgp_summary_no_neigh':
+    #     m_asic_no_neigh_json_file = 'no_bgp_neigh.json'
+    #     m_asic_basic_device_info_json_file = 'device_bgp_info.json'
     else:
         m_asic_json_file = os.path.join(
             test_path, 'mock_tables', 'dummy.json')
