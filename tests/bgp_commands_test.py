@@ -98,7 +98,7 @@ Try "summary --help" for help.
 Error: bgp summary from bgp container not in json format
 """
 
-show_error_no_v6_neighbor = """\
+show_error_no_v6_neighbor_single_asic = """\
 
 IPv6 Unicast Summary:
 BGP router identifier 10.1.0.32, local AS number 65100 vrf-id 0
@@ -114,10 +114,46 @@ Neighbhor    V    AS    MsgRcvd    MsgSent    TblVer    InQ    OutQ    Up/Down  
 Total number of neighbors 0
 """
 
-show_error_no_v4_neighbor = """\
+show_error_no_v4_neighbor_single_asic = """\
 
 IPv4 Unicast Summary:
 BGP router identifier 10.1.0.32, local AS number 65100 vrf-id 0
+BGP table version 8972
+RIB entries 0, using 0 bytes of memory
+Peers 0, using 0 KiB of memory
+Peer groups 0, using 0 bytes of memory
+
+
+Neighbhor    V    AS    MsgRcvd    MsgSent    TblVer    InQ    OutQ    Up/Down    State/PfxRcd    NeighborName
+-----------  ---  ----  ---------  ---------  --------  -----  ------  ---------  --------------  --------------
+
+Total number of neighbors 0
+"""
+
+show_error_no_v6_neighbor_multi_asic = """\
+
+IPv6 Unicast Summary:
+asic0: BGP router identifier 10.1.0.32, local AS number 65100 vrf-id 0
+BGP table version 8972
+asic1: BGP router identifier 10.1.0.32, local AS number 65100 vrf-id 0
+BGP table version 8972
+RIB entries 0, using 0 bytes of memory
+Peers 0, using 0 KiB of memory
+Peer groups 0, using 0 bytes of memory
+
+
+Neighbhor    V    AS    MsgRcvd    MsgSent    TblVer    InQ    OutQ    Up/Down    State/PfxRcd    NeighborName
+-----------  ---  ----  ---------  ---------  --------  -----  ------  ---------  --------------  --------------
+
+Total number of neighbors 0
+"""
+
+show_error_no_v4_neighbor_multi_asic = """\
+
+IPv4 Unicast Summary:
+asic0: BGP router identifier 10.1.0.32, local AS number 65100 vrf-id 0
+BGP table version 8972
+asic1: BGP router identifier 10.1.0.32, local AS number 65100 vrf-id 0
 BGP table version 8972
 RIB entries 0, using 0 bytes of memory
 Peers 0, using 0 KiB of memory
@@ -368,7 +404,7 @@ class TestBgpCommandsSingleAsic(object):
             show.cli.commands["ip"].commands["bgp"].commands["summary"], [])
         print("{}".format(result.output))
         assert result.exit_code == 0
-        assert result.output == show_error_no_v4_neighbor
+        assert result.output == show_error_no_v4_neighbor_single_asic
 
     @pytest.mark.parametrize('setup_single_bgp_instance',
                              ['show_bgp_summary_no_neigh'], indirect=['setup_single_bgp_instance'])
@@ -382,7 +418,7 @@ class TestBgpCommandsSingleAsic(object):
             show.cli.commands["ipv6"].commands["bgp"].commands["summary"], [])
         print("{}".format(result.output))
         assert result.exit_code == 0
-        assert result.output == show_error_no_v6_neighbor
+        assert result.output == show_error_no_v6_neighbor_single_asic
 
     @classmethod
     def teardown_class(cls):
@@ -415,7 +451,7 @@ class TestBgpCommandsMultiAsic(object):
             show.cli.commands["ip"].commands["bgp"].commands["summary"], [])
         print("{}".format(result.output))
         assert result.exit_code == 0
-        assert result.output == show_error_no_v4_neighbor
+        assert result.output == show_error_no_v4_neighbor_multi_asic
 
     @pytest.mark.parametrize('setup_multi_asic_bgp_instance',
                              ['show_bgp_summary_no_neigh'], indirect=['setup_multi_asic_bgp_instance'])
@@ -429,7 +465,7 @@ class TestBgpCommandsMultiAsic(object):
             show.cli.commands["ipv6"].commands["bgp"].commands["summary"], [])
         print("{}".format(result.output))
         assert result.exit_code == 0
-        assert result.output == show_error_no_v6_neighbor
+        assert result.output == show_error_no_v6_neighbor_multi_asic
 
     @classmethod
     def teardown_class(cls):
